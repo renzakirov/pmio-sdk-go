@@ -1,0 +1,6503 @@
+{
+  "swagger": "2.0",
+  "host": "CHANGEME.api.processmaker.io",
+  "basePath": "/api/v1",
+  "info": {
+    "title": "example",
+    "version": "v1"
+  },
+  "tags": [
+    {
+      "name": "users",
+      "description": "Operations about users."
+    },
+    {
+      "name": "groups",
+      "description": "Operations about user groups."
+    },
+    {
+      "name": "oauth",
+      "description": "Operations with Oauth clients and tokens."
+    },
+    {
+      "name": "input/output",
+      "description": "Operations with Input/Output objects."
+    },
+    {
+      "name": "process",
+      "description": "A process is a collection of modeled and related activities, tasks and elements that produce a specific service or product and can be used by customers or automated systems."
+    },
+    {
+      "name": "process instance",
+      "description": "A process instance is an execution of a business process. Process instances can be started using start events. Each process instance can be independently monitored and managed."
+    },
+    {
+      "name": "task",
+      "description": "In ProcessMaker, a task is a logical group of sequential steps sharing a common goal. ProcessMaker I/O V1.0 supports the following types of Tasks: User Task, Script and Service Task."
+    },
+    {
+      "name": "flow",
+      "description": "The connectors that connect the Events, Activities and Gateways with each other to form business workflows and define the behavior of a process are called connecting objects. ProcessMaker I/O V1.0 supports the following types of connecting objects: Sequence Flows and Message flows."
+    },
+    {
+      "name": "gateway",
+      "description": "Gateways are elements used to control how the flow moves in a process. Gateways are mechanisms that control and regulate process flows based on routing rules. If the flow does not need to be controlled, then a gateway is not needed.  As tokens arrive at a Gateway they can be merged together on input and/or split apart on output as the gateway mechanisms are invoked. ProcessMaker I/O V1.0 supports the following types of gateways: Exclusive, Inclusive and Parallel."
+    },
+    {
+      "name": "event",
+      "description": "Events are used to model something that happens during the lifetime of a process. The Events affect the flow of the process and cover activity start, end, change states, etc. The term “event” is general enough to cover many things in a process. In BPMN v2.0.2, there are three main types of events: Start Events, which indicate where a process will start, End Events, which indicate where a path of a process will end and Intermediate Events, which indicate where something happens somewhere between the start and end of a process. There are catching and throwing events. ProcessMaker I/O V1.0 supports the following types of events: Start, End, Message Start, Message Intermediate Throw event, Message Intermediate Catch, Timer Boundary Interrupting and Non-Interrupting Events."
+    }
+  ],
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/groups": {
+      "get": {
+        "tags": [
+          "client",
+          "groups"
+        ],
+        "description": "This method retrieves all existing groups.",
+        "operationId": "findGroups",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number to fetch",
+            "required": false,
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Amount of items per page",
+            "required": false,
+            "type": "integer",
+            "default": 15,
+            "maximum": 100,
+            "minimum": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of groups retrieved",
+            "schema": {
+              "$ref": "#/definitions/GroupCollection"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "client",
+          "groups"
+        ],
+        "description": "This method creates a new group.",
+        "operationId": "addGroup",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "GroupCreateItem",
+            "description": "JSON API with the Group object to add",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GroupCreateItem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Group created",
+            "schema": {
+              "$ref": "#/definitions/GroupItem"
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        },
+        "x-code-samples": [
+          {
+            "lang": "Java",
+            "source": "GroupCreateItem groupCreateItem = new GroupCreateItem();\r\n        Group group = new Group();\r\n        GroupAttributes groupAttributes = new GroupAttributes();\r\n        groupAttributes.setDescription(\"mySuperGroup\");\r\n        groupAttributes.setTitle(\"SuperGroup\");\r\n        groupAttributes.setStatus(GroupAttributes.StatusEnum.ACTIVE);\r\n        groupAttributes.setCode(\"A3\");\r\n        group.setAttributes(groupAttributes);\r\n        groupCreateItem.setData(group);\r\n\r\n        GroupItem response = api.addGroup(groupCreateItem);"
+          },
+          {
+            "lang": "Perl",
+            "source": "my $group_create_item = ProcessMaker::PMIO::Object::GroupCreateItem->new(\"data\" => { \"type\" => \"group\", \"attributes\" => {\"code\" => \"CODE_\" . int(rand(100000)), \"title\" => \"[TITLE]\", \"status\" => \"ACTIVE\" } } );\r\nmy $res = $test_api->add_group(\"group_create_item\" => $group_create_item);"
+          }
+        ]
+      }
+    },
+    "/groups/{id}": {
+      "get": {
+        "tags": [
+          "client",
+          "groups"
+        ],
+        "description": "This method retrieves a group using its ID.",
+        "operationId": "findGroupById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of group to return",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Group retrieved",
+            "schema": {
+              "$ref": "#/definitions/GroupItem"
+            }
+          },
+          "404": {
+            "description": "Group not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "client",
+          "groups"
+        ],
+        "description": "This method updates an existing group.",
+        "operationId": "updateGroup",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of group to retrieve",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "GroupUpdateItem",
+            "description": "Group object to edit",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GroupUpdateItem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Group updated",
+            "schema": {
+              "$ref": "#/definitions/GroupItem"
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "client",
+          "groups"
+        ],
+        "description": "This method deletes a group using the group ID.",
+        "operationId": "deleteGroup",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of group to delete",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Group successfully deleted",
+            "schema": {
+              "$ref": "#/definitions/ResultSuccess"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "500": {
+            "description": "Deletion error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    },
+    "/groups/{id}/users": {
+      "post": {
+        "tags": [
+          "client",
+          "groups"
+        ],
+        "description": "This method synchronizes one or more users with a group.",
+        "operationId": "syncUsersToGroup",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of group to be modified",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "GroupSyncUsersItem",
+            "description": "JSON API with array of users IDs to sync",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GroupSyncUsersItem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User(s) synced to group",
+            "schema": {
+              "$ref": "#/definitions/ResultSuccess"
+            }
+          },
+          "500": {
+            "description": "Error adding group(s)",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "client",
+          "groups"
+        ],
+        "description": "This method adds one or more new users to a group.",
+        "operationId": "addUsersToGroup",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of group to be modified",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "GroupAddUsersItem",
+            "description": "JSON API response with array of user IDs",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GroupAddUsersItem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON API result details",
+            "schema": {
+              "$ref": "#/definitions/ResultSuccess"
+            }
+          },
+          "422": {
+            "description": "Unprocessable entity",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "500": {
+            "description": "Error adding group(s)",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        },
+        "x-code-samples": [
+          {
+            "lang": "PHP",
+            "source": "$groupAddUserItem = new GroupAddUsersItem([\r\n     'data' => new UserIds([\r\n         'users' => [$apiInstance->myselfUser()->getData()->getId()]\r\n      ])\r\n  ]);\r\n$apiInstance->addUsersToGroup($group->getData()->getId(), groupAddUserItem);"
+          },
+          {
+            "lang": "Java",
+            "source": "GroupCreateItem groupCreateItem = new GroupCreateItem();\r\n        Group group = new Group();\r\n        GroupAttributes groupAttributes = new GroupAttributes();\r\n        groupAttributes.setDescription(\"mySuperGroup\");\r\n        groupAttributes.setTitle(\"SuperGroup\");\r\n        groupAttributes.setStatus(GroupAttributes.StatusEnum.ACTIVE);\r\n        groupAttributes.setCode(\"A3\");\r\n        group.setAttributes(groupAttributes);\r\n        groupCreateItem.setData(group);\r\n\r\n        GroupItem groupItem = api.addGroup(groupCreateItem);\r\n        createdGroups.add(groupItem.getData().getId());\r\n\r\n        GroupAddUsersItem groupAddUsersItem = new GroupAddUsersItem();\r\n        UserIds userIds = new UserIds();\r\n        userIds.addUsersItem(user.getData().getId());\r\n        groupAddUsersItem.setData(userIds);\r\n        ResultSuccess response = api.addUsersToGroup(groupItem.getData().getId(), groupAddUsersItem);"
+          },
+          {
+            "lang": "Python",
+            "source": "import test_group\ngroupid = test_group.TestGroup.testGroup()\nassert groupid is not None\nimport test_user\nuserid = test_user.TestUser.testUser()\nassert userid is not None\nr = self.api.add_users_to_group(userid, GroupAddUsersItem(data=UserIds(users=[userid])))"
+          },
+          {
+            "lang": "Perl",
+            "source": "my $user_create_item = ProcessMaker::PMIO::Object::UserCreateItem->new(\"data\" => { \"id\" => $user_id, \"type\" => \"user\", \"attributes\" => {\"email\" => \"test_email\\@testdomain.com\", \"password\" => \"[PASSWORD]\", \"username\" => \"USER\" . int(rand(100000)) , \"firstname\" => \"[FIRST NAME]\", \"lastname\" => \"[LAST NAME]\"} } );\r\nmy $res = $test_api->add_user(\"user_create_item\" => $user_create_item);\r\nmy $res_hash = $res->to_hash();\r\nmy $new_user_id = $res_hash->{\"data\"}->{\"id\"};\r\nmy $group_create_item = ProcessMaker::PMIO::Object::GroupCreateItem->new(\"data\" => { \"type\" => \"group\", \"attributes\" => {\"code\" => \"CODE_\" . int(rand(100000)), \"title\" => \"[TITLE]\", \"status\" => \"ACTIVE\" } } );\r\nmy $group_create_item = ProcessMaker::PMIO::Object::GroupCreateItem->new(\"data\" => { \"type\" => \"group\", \"attributes\" => {\"code\" => \"CODE_\" . int(rand(100000)), \"title\" => \"[TITLE]\", \"status\" => \"ACTIVE\" } } );\r\n$res = $test_api->add_group(\"group_create_item\" => $group_create_item);\r\n$res_hash = $res->to_hash();\r\nmy $new_group_id = $res_hash->{\"data\"}->{\"id\"};\r\nmy $group_add_users_item = ProcessMaker::PMIO::Object::GroupAddUsersItem->new( \"data\" => {\"users\" => [ $new_user_id ] } );\r\n$res = $test_api->add_users_to_group(\"id\" => $new_group_id, \"group_add_users_item\" => $group_add_users_item);"
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "client",
+          "groups"
+        ],
+        "description": "This method removes one or more users from a group.",
+        "operationId": "removeUsersFromGroup",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of group to be modified",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "GroupRemoveUsersItem",
+            "description": "JSON API response with Users IDs to remove",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GroupRemoveUsersItem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User(s) removed from group",
+            "schema": {
+              "$ref": "#/definitions/ResultSuccess"
+            }
+          },
+          "422": {
+            "description": "Unprocessable entity",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "500": {
+            "description": "Error adding group(s)",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    },
+    "/instances/{instance_id}/tasks/{task_id}/task_instances": {
+      "get": {
+        "tags": [
+          "client",
+          "process instance"
+        ],
+        "description": "This method retrieves task instances using the instance ID and the task ID.",
+        "operationId": "findTaskInstancesByInstanceAndTaskId",
+        "parameters": [
+          {
+            "name": "instance_id",
+            "in": "path",
+            "description": "ID of the instance",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "task_id",
+            "in": "path",
+            "description": "ID of the task",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of task instances retrieved",
+            "schema": {
+              "$ref": "#/definitions/TaskInstanceCollection"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    },
+    "/instances/{instance_id}/tasks/{task_id}/task_instances/delegated": {
+      "get": {
+        "tags": [
+          "client",
+          "process instance"
+        ],
+        "description": "This method retrieves delegated task instances using the instance ID and the task ID.",
+        "operationId": "findTaskInstancesByInstanceAndTaskIdDelegated",
+        "parameters": [
+          {
+            "name": "instance_id",
+            "in": "path",
+            "description": "ID of the instance",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "task_id",
+            "in": "path",
+            "description": "ID of the task",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of task instances retrieved",
+            "schema": {
+              "$ref": "#/definitions/TaskInstanceCollection"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    },
+    "/instances/{instance_id}/tasks/{task_id}/task_instances/started": {
+      "get": {
+        "tags": [
+          "client",
+          "process instance"
+        ],
+        "description": "This method retrieves started task instances using the instance ID and the task ID.",
+        "operationId": "findTaskInstancesByInstanceAndTaskIdStarted",
+        "parameters": [
+          {
+            "name": "instance_id",
+            "in": "path",
+            "description": "ID of the instance",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "task_id",
+            "in": "path",
+            "description": "ID of the task",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of task instances retrieved",
+            "schema": {
+              "$ref": "#/definitions/TaskInstanceCollection"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    },
+    "/processes": {
+      "get": {
+        "tags": [
+          "client",
+          "process"
+        ],
+        "description": "This method retrieves all existing processes.",
+        "operationId": "findProcesses",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number to fetch",
+            "required": false,
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Amount of items per page",
+            "required": false,
+            "type": "integer",
+            "default": 15,
+            "maximum": 100,
+            "minimum": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of processes retrieved",
+            "schema": {
+              "$ref": "#/definitions/ProcessCollection"
+            }
+          },
+          "401": {
+            "description": "Unauthorized access",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        },
+        "x-code-samples": [
+          {
+            "lang": "Java",
+            "source": "private ProcessItem addProcessItem(String name) throws ApiException {\r\n        ProcessCreateItem processCreateItem = new ProcessCreateItem();\r\n        Process process = new Process();\r\n        ProcessAttributes processAttributes = new ProcessAttributes();\r\n        processAttributes.setStatus(ProcessAttributes.StatusEnum.ACTIVE);\r\n        processAttributes.setName(name);\r\n        processAttributes.setDurationBy(ProcessAttributes.DurationByEnum.WORKING_DAYS);\r\n        processAttributes.setType(ProcessAttributes.TypeEnum.NORMAL);\r\n        processAttributes.setDesignAccess(ProcessAttributes.DesignAccessEnum.PUBLIC);\r\n        process.setAttributes(processAttributes);\r\n        processCreateItem.setData(process);\r\n        return api.addProcess(processCreateItem);\r\n    }\n addProcessItem(\"ProcessName1\");\r\n        addProcessItem(\"ProcessName2\");\r\n        addProcessItem(\"ProcessName3\");\r\n        addProcessItem(\"ProcessName4\");\r\n        ProcessCollection response = api.findProcesses(1, 3);"
+          },
+          {
+            "lang": "Perl",
+            "source": "my $process_collection = $test_api->find_processes(\"page\" => 1, \"perPage\" => 10);\r\nprint Dumper($process_collection);"
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "client",
+          "process"
+        ],
+        "description": "This method creates a new process.",
+        "operationId": "addProcess",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "ProcessCreateItem",
+            "description": "JSON API response with the process object to add",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ProcessCreateItem"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "New process created",
+            "schema": {
+              "$ref": "#/definitions/ProcessItem"
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        },
+        "x-code-samples": [
+          {
+            "lang": "PHP",
+            "source": "/** @var ProcessAttributes $processAttr */\r\n$processAttr = new ProcessAttributes();\r\n$processAttr->setStatus('ACTIVE');\r\n$processAttr->setName('Example process '.$random);\r\n$processAttr->setDurationBy('WORKING_DAYS');\r\n$processAttr->setType('NORMAL');\r\n$processAttr->setDesignAccess('PUBLIC');\r\n/** @var ProcessItem $result */\r\n$process = $apiInstance->addProcess(new ProcessCreateItem(\r\n        [\r\n            'data' => new Process(['attributes' => $processAttr])\r\n        ]\r\n    )\r\n);"
+          },
+          {
+            "lang": "Java",
+            "source": "private ProcessItem addProcessItem(String name) throws ApiException {\r\n        ProcessCreateItem processCreateItem = new ProcessCreateItem();\r\n        Process process = new Process();\r\n        ProcessAttributes processAttributes = new ProcessAttributes();\r\n        processAttributes.setStatus(ProcessAttributes.StatusEnum.ACTIVE);\r\n        processAttributes.setName(name);\r\n        processAttributes.setDurationBy(ProcessAttributes.DurationByEnum.WORKING_DAYS);\r\n        processAttributes.setType(ProcessAttributes.TypeEnum.NORMAL);\r\n        processAttributes.setDesignAccess(ProcessAttributes.DesignAccessEnum.PUBLIC);\r\n        process.setAttributes(processAttributes);\r\n        processCreateItem.setData(process);\r\n        return api.addProcess(processCreateItem);\r\n    }\n ProcessItem response = addProcessItem(\"ProcessName\");"
+          },
+          {
+            "lang": "Perl",
+            "source": "my $process_create_item =  ProcessMaker::PMIO::Object::ProcessCreateItem->new( \"data\" => {\"type\" => \"process\", \"attributes\" => { \"name\" => \"[NAME]\", \"type\" => \"NORMAL\", \"status\" => \"ACTIVE\", \"duration_by\" => \"WORKING_DAYS\", \"design_access\" => \"PUBLIC\" } } );\r\nmy $res = $test_api->add_process(\"process_create_item\" => $process_create_item);"
+          }
+        ]
+      }
+    },
+    "/processes/import": {
+      "post": {
+        "tags": [
+          "client",
+          "process"
+        ],
+        "description": "This method imports BPMN 2.0 files. A new process(es) is/are created and its object returned back when import is successful.",
+        "operationId": "importBpmnFile",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "bpmnImportItem",
+            "description": "JSON API with the BPMN file to import",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bpmnImportItem"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "File imported and process instance created successfully",
+            "schema": {
+              "$ref": "#/definitions/ProcessCollection_1"
+            }
+          },
+          "403": {
+            "description": "Access forbidden",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        },
+        "x-code-samples": [
+          {
+            "lang": "PHP",
+            "source": "$result = $apiInstance->importBpmnFile(new BpmnImportItem(\r\n    [\r\n        'data' => new BpmnFile(\r\n            [\r\n                'attributes' => (new BpmnFileAttributes())\r\n                ->setBpmn(file_get_contents('slack.bpmn'))\r\n            ])\r\n    ]\r\n));\r\n\r\n/** @var ProcessMaker\\PMIO\\Model\\Process[] $processes */\r\n$processes = $result->getData();"
+          },
+          {
+            "lang": "Java",
+            "source": "BpmnImportItem bpmnImportItem = new BpmnImportItem();\nBpmnFile bpmnFile = new BpmnFile();\nBpmnFileAttributes attributes = new BpmnFileAttributes();\nString filePath = \"src/test/resources/message_startevent.bpmn\";\nbyte[] fileData = IOUtils.readFully(new FileInputStream(filePath), -1, false);\nattributes.setBpmn(new String(fileData));\nbpmnFile.setAttributes(attributes);\nbpmnImportItem.setData(bpmnFile);\nProcessCollection1 response = api.importBpmnFile(bpmnImportItem);"
+          },
+          {
+            "lang": "Python",
+            "source": "bpmn = open('test/Api/message_startevent.bpmn','rb').read()\natt = BpmnFileAttributes()\natt.bpmn = bpmn\nr = self.api.import_bpmn_file(BpmnImportItem(data=BpmnFile(attributes=att)))"
+          },
+          {
+            "lang": "Perl",
+            "source": "open (my $f, \"<t/message_startevent.bpmn\");\r\nmy $bpmn = \"\";\r\nwhile (<$f>) {\r\n\t$bpmn .= $_;\r\n}\r\nmy $bpmn_import_item = ProcessMaker::PMIO::Object::BpmnImportItem->new(\"data\" => {\"type\" => \"process\", \"attributes\" => {\"bpmn\" => $bpmn } } );\r\nmy $res = $test_api->import_bpmn_file(\"bpmn_import_item\" => $bpmn_import_item);"
+          }
+        ]
+      }
+    },
+    "/processes/{id}": {
+      "get": {
+        "tags": [
+          "client",
+          "process"
+        ],
+        "description": "This method retrieves a process using its ID.",
+        "operationId": "findProcessById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the process to return",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Process retrieved",
+            "schema": {
+              "$ref": "#/definitions/ProcessItem"
+            }
+          },
+          "404": {
+            "description": "Process not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "client",
+          "process"
+        ],
+        "description": "This method updates an existing process.",
+        "operationId": "updateProcess",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the process to retrieve",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "ProcessUpdateItem",
+            "description": "Process object to edit",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ProcessUpdateItem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Process updated",
+            "schema": {
+              "$ref": "#/definitions/ProcessItem"
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "client",
+          "process"
+        ],
+        "description": "This method deletes a process using the process ID.",
+        "operationId": "deleteProcess",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Process ID to delete",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item successfully deleted",
+            "schema": {
+              "$ref": "#/definitions/ResultSuccess"
+            }
+          },
+          "401": {
+            "description": "Unauthorized access",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "500": {
+            "description": "Deletion error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        },
+        "x-code-samples": [
+          {
+            "lang": "Java",
+            "source": "private ProcessItem addProcessItem(String name) throws ApiException {\r\n        ProcessCreateItem processCreateItem = new ProcessCreateItem();\r\n        Process process = new Process();\r\n        ProcessAttributes processAttributes = new ProcessAttributes();\r\n        processAttributes.setStatus(ProcessAttributes.StatusEnum.ACTIVE);\r\n        processAttributes.setName(name);\r\n        processAttributes.setDurationBy(ProcessAttributes.DurationByEnum.WORKING_DAYS);\r\n        processAttributes.setType(ProcessAttributes.TypeEnum.NORMAL);\r\n        processAttributes.setDesignAccess(ProcessAttributes.DesignAccessEnum.PUBLIC);\r\n        process.setAttributes(processAttributes);\r\n        processCreateItem.setData(process);\r\n        return api.addProcess(processCreateItem);\r\n    }\n ProcessItem process = addProcessItem(\"Process\");\r\n        ResultSuccess response = api.deleteProcess(process.getData().getId());"
+          },
+          {
+            "lang": "Perl",
+            "source": "my $process_create_item =  ProcessMaker::PMIO::Object::ProcessCreateItem->new( \"data\" => {\"type\" => \"process\", \"attributes\" => { \"name\" => \"[NAME]\", \"type\" => \"NORMAL\", \"status\" => \"ACTIVE\", \"duration_by\" => \"WORKING_DAYS\", \"design_access\" => \"PUBLIC\" } } );\r\nmy $res = $test_api->add_process(\"process_create_item\" => $process_create_item);\r\nmy $res_hash = $res->to_hash();\r\nmy $pid = $res_hash->{\"data\"}->{\"id\"};\r\n$res = $test_api->delete_process(\"id\" => $pid);"
+          }
+        ]
+      }
+    },
+    "/processes/{process_id}/datamodels/search/{search_param}": {
+      "get": {
+        "tags": [
+          "client",
+          "process instance"
+        ],
+        "description": "This method returns the data model by field passed in get argument.",
+        "operationId": "findByFieldInsideDataModel",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "ID of the process to return",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search_param",
+            "in": "path",
+            "description": "Key and value of searched field in DataModel",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number to fetch",
+            "required": false,
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Amount of items per page",
+            "required": false,
+            "type": "integer",
+            "default": 15,
+            "maximum": 100,
+            "minimum": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "DataModel retrieved",
+            "schema": {
+              "$ref": "#/definitions/DataModelCollection"
+            },
+            "headers": {
+              "X-RateLimit-Limit": {
+                "type": "integer",
+                "description": "The number of allowed requests in the current period"
+              },
+              "X-RateLimit-Remaining": {
+                "type": "integer",
+                "description": "The number of remaining requests in the current period"
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    },
+    "/processes/{process_id}/events": {
+      "get": {
+        "tags": [
+          "client",
+          "event"
+        ],
+        "description": "This method returns all events related to the running process.",
+        "operationId": "findEvents",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "ID of the process related to the event",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number to fetch",
+            "required": false,
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Amount of items per page",
+            "required": false,
+            "type": "integer",
+            "default": 15,
+            "maximum": 100,
+            "minimum": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of events retrieved",
+            "schema": {
+              "$ref": "#/definitions/EventCollection"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "client",
+          "event"
+        ],
+        "description": "This method creates the new event.",
+        "operationId": "addEvent",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "ID of the process related to the event",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "EventCreateItem",
+            "description": "JSON API response with the event object to add",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EventCreateItem"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Event response",
+            "schema": {
+              "$ref": "#/definitions/EventItem"
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    },
+    "/processes/{process_id}/events/{event_id}": {
+      "get": {
+        "tags": [
+          "client",
+          "event"
+        ],
+        "description": "This method retrieves an event using its ID.",
+        "operationId": "findEventById",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "ID of the process to return",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "event_id",
+            "in": "path",
+            "description": "ID of the event to return",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Event retrieved",
+            "schema": {
+              "$ref": "#/definitions/EventItem"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "client",
+          "event"
+        ],
+        "description": "This method updates an existing event.",
+        "operationId": "updateEvent",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "ID of the process to retrieve",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "event_id",
+            "in": "path",
+            "description": "ID of the event to retrieve",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "EventUpdateItem",
+            "description": "Event object to edit",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EventUpdateItem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Event updated",
+            "schema": {
+              "$ref": "#/definitions/EventItem"
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "client",
+          "event"
+        ],
+        "description": "This method deletes an event using the event ID and process ID.",
+        "operationId": "deleteEvent",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "event_id",
+            "in": "path",
+            "description": "ID of the event to delete",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item successfully deleted",
+            "schema": {
+              "$ref": "#/definitions/ResultSuccess"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "500": {
+            "description": "Deletion error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    },
+    "/processes/{process_id}/events/{event_id}/connectors": {
+      "get": {
+        "tags": [
+          "client",
+          "event"
+        ],
+        "description": "This method returns all event connectors related to the run process and Event.",
+        "operationId": "findEventConnectors",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "ID of the process to fetch",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "event_id",
+            "in": "path",
+            "description": "ID of the task to fetch",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number to fetch",
+            "required": false,
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Amount of items per page",
+            "required": false,
+            "type": "integer",
+            "default": 15,
+            "maximum": 100,
+            "minimum": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Event connectors list",
+            "schema": {
+              "$ref": "#/definitions/EventConnectorsCollection"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "client",
+          "event"
+        ],
+        "description": "This method is intended for creating a new event connector.",
+        "operationId": "addEventConnector",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "ID of the process to fetch",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "event_id",
+            "in": "path",
+            "description": "ID of the event to fetch",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "EventConnectorCreateItem",
+            "description": "JSON API with the EventConnector object to add",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EventConnectorCreateItem"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created event connector response",
+            "schema": {
+              "$ref": "#/definitions/EventConnector_1"
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    },
+    "/processes/{process_id}/events/{event_id}/connectors/{connector_id}": {
+      "get": {
+        "tags": [
+          "client",
+          "event"
+        ],
+        "description": "This method returns all event connectors related to the run process and event.",
+        "operationId": "findEventConnectorById",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "ID of the process to fetch",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "event_id",
+            "in": "path",
+            "description": "ID of Event to fetch",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "connector_id",
+            "in": "path",
+            "description": "ID of EventConnector to fetch",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Event Connector Item response",
+            "schema": {
+              "$ref": "#/definitions/EventConnector_1"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "client",
+          "event"
+        ],
+        "description": "This method updates the existing event connector with new parameter values.",
+        "operationId": "updateEventConnector",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "ID of the process to fetch",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "event_id",
+            "in": "path",
+            "description": "ID of the event to fetch",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "connector_id",
+            "in": "path",
+            "description": "ID of the event Connector to fetch",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "EventConnectorUpdateItem",
+            "description": "EventConnector object to edit",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EventConnectorUpdateItem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON API response with updated EventConnector object",
+            "schema": {
+              "$ref": "#/definitions/EventConnector_1"
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "client",
+          "event"
+        ],
+        "description": "This method is for deleting a single event connector based on event ID, process ID and Connector ID.",
+        "operationId": "deleteEventConnector",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "ID of the process item",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "event_id",
+            "in": "path",
+            "description": "ID of item to fetch",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "connector_id",
+            "in": "path",
+            "description": "ID of EventConnector to fetch",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item successfully deleted",
+            "schema": {
+              "$ref": "#/definitions/ResultSuccess"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "500": {
+            "description": "Deletion error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    },
+    "/processes/{process_id}/events/{event_id}/trigger": {
+      "post": {
+        "tags": [
+          "client",
+          "event"
+        ],
+        "description": "This method starts/triggers an event.",
+        "operationId": "eventTrigger",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID related to the event",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "event_id",
+            "in": "path",
+            "description": "ID of the event to trigger",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "TriggerEventCreateItem",
+            "description": "Json with some parameters",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TriggerEventCreateItem"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Event triggered",
+            "schema": {
+              "$ref": "#/definitions/DataModelItem_1"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        },
+        "x-code-samples": [
+          {
+            "lang": "PHP",
+            "source": "/** @var array $arrayContent */\r\n $arrayContent = ['key' => 6, 'add' => 15, 'confirm' => false];\r\n /** @var DataModelAttributes $dataModelAttr */\r\n $dataModelAttr = new DataModelAttributes();\r\n $dataModelAttr->setContent(json_encode($arrayContent));\r\n /** @var DataModelItem $result */\r\n $result = $apiInstance->eventTrigger(\r\n     $process->getData()->getId(),\r\n     $startEvent->getData()->getId(),\r\n     new TriggerEventCreateItem(\r\n         [\r\n            'data' => new DataModel(['attributes' => $dataModelAttr])\r\n         ]\r\n     )\r\n );"
+          }
+        ]
+      }
+    },
+    "/processes/{process_id}/events/{event_id}/webhook": {
+      "post": {
+        "tags": [
+          "client",
+          "event"
+        ],
+        "description": "This webhook method triggers a given event object.",
+        "operationId": "eventWebhook",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID related to the event",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "event_id",
+            "in": "path",
+            "description": "ID of the event to trigger",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "TriggerBody",
+            "description": "Freeform JSON structure, it will be passed to the newly created DataModel",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Event triggered, please note - result will be always empty string",
+            "schema": {
+              "type": "string",
+              "title": "WebhookResponse"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    },
+    "/processes/{process_id}/flows": {
+      "get": {
+        "tags": [
+          "client",
+          "flow"
+        ],
+        "description": "This method retrieves all existing flows.",
+        "operationId": "findFlows",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "ID of the process related to the flow",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number to fetch",
+            "required": false,
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Amount of items per page",
+            "required": false,
+            "type": "integer",
+            "default": 15,
+            "maximum": 100,
+            "minimum": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of flows retrieved",
+            "schema": {
+              "$ref": "#/definitions/FlowCollection"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "client",
+          "flow"
+        ],
+        "description": "This method creates a new Sequence Flow.",
+        "operationId": "addFlow",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "ID of the process related to the flow",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "FlowCreateItem",
+            "description": "JSON API response with the Flow object to add",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/FlowCreateItem"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The Sequence Flow was created",
+            "schema": {
+              "$ref": "#/definitions/FlowItem"
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    },
+    "/processes/{process_id}/flows/{flow_id}": {
+      "get": {
+        "tags": [
+          "client",
+          "flow"
+        ],
+        "description": "This method retrieves a flow based on its ID.",
+        "operationId": "findFlowById",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "ID of the process to return",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "flow_id",
+            "in": "path",
+            "description": "ID of the flow to return",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Flow retrieved",
+            "schema": {
+              "$ref": "#/definitions/FlowItem"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "client",
+          "flow"
+        ],
+        "description": "This method updates an existing flow.",
+        "operationId": "updateFlow",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "ID of the process to retrieve",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "flow_id",
+            "in": "path",
+            "description": "ID of the flow to retrieve",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "FlowUpdateItem",
+            "description": "Flow object to edit",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/FlowUpdateItem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Flow updated",
+            "schema": {
+              "$ref": "#/definitions/FlowItem"
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "client",
+          "flow"
+        ],
+        "description": "This method deletes the Sequence Flow using the flow ID and the process ID.",
+        "operationId": "deleteFlow",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "flow_id",
+            "in": "path",
+            "description": "ID of the flow to delete",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item successfully deleted",
+            "schema": {
+              "$ref": "#/definitions/ResultSuccess"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "500": {
+            "description": "Deletion error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    },
+    "/processes/{process_id}/gateways": {
+      "get": {
+        "tags": [
+          "client",
+          "gateway"
+        ],
+        "description": "This method retrieves all existing gateways.",
+        "operationId": "findGateways",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "ID of the process related to the gateway",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number to fetch",
+            "required": false,
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Amount of items per page",
+            "required": false,
+            "type": "integer",
+            "default": 15,
+            "maximum": 100,
+            "minimum": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Gateways list",
+            "schema": {
+              "$ref": "#/definitions/GatewayCollection"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "client",
+          "gateway"
+        ],
+        "description": "This method creates a new gateway.",
+        "operationId": "addGateway",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "ID of the process related to the gateway",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "GatewayCreateItem",
+            "description": "JSON API response with the gateway object to add",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GatewayCreateItem"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Gateway created",
+            "schema": {
+              "$ref": "#/definitions/GatewayItem"
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    },
+    "/processes/{process_id}/gateways/{gateway_id}": {
+      "get": {
+        "tags": [
+          "client",
+          "gateway"
+        ],
+        "description": "This method retrieves a gateway based on its ID.",
+        "operationId": "findGatewayById",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "ID of the process to return",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "gateway_id",
+            "in": "path",
+            "description": "ID of gateway to return",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Gateway retrieved",
+            "schema": {
+              "$ref": "#/definitions/GatewayItem"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "client",
+          "gateway"
+        ],
+        "description": "This method updates an existing gateway.",
+        "operationId": "updateGateway",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "ID of the process to retrieve",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "gateway_id",
+            "in": "path",
+            "description": "ID of the gateway to retrieve",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "GatewayUpdateItem",
+            "description": "Gateway object to edit",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GatewayUpdateItem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Gateway updated",
+            "schema": {
+              "$ref": "#/definitions/GatewayItem"
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "client",
+          "gateway"
+        ],
+        "description": "This method deletes a single item using the gateway ID and the process ID.",
+        "operationId": "deleteGateway",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "gateway_id",
+            "in": "path",
+            "description": "ID of the process to delete",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item successfully deleted",
+            "schema": {
+              "$ref": "#/definitions/ResultSuccess"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "500": {
+            "description": "Deletion error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    },
+    "/processes/{process_id}/instances": {
+      "get": {
+        "tags": [
+          "client",
+          "process instance"
+        ],
+        "description": "This method retrieves instances related to the process using the process ID",
+        "operationId": "findInstances",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID related to the instances",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number to fetch",
+            "required": false,
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Amount of items per page",
+            "required": false,
+            "type": "integer",
+            "default": 15,
+            "maximum": 100,
+            "minimum": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of instances retrieved",
+            "schema": {
+              "$ref": "#/definitions/InstanceCollection"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "client",
+          "process instance"
+        ],
+        "description": "This method creates a new instance.",
+        "operationId": "addInstance",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID related to the instance",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "InstanceCreateItem",
+            "description": "JSON API response with the instance object to add",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/InstanceCreateItem"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Instance created",
+            "schema": {
+              "$ref": "#/definitions/InstanceItem"
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    },
+    "/processes/{process_id}/instances/{instance_id}": {
+      "get": {
+        "tags": [
+          "client",
+          "process instance"
+        ],
+        "description": "This method retrieves an instance using its ID.",
+        "operationId": "findInstanceById",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "ID of the process to return",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "instance_id",
+            "in": "path",
+            "description": "ID of the instance to return",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Instance retrieved",
+            "schema": {
+              "$ref": "#/definitions/InstanceItem"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "client",
+          "process instance"
+        ],
+        "description": "This method updates  an existing instance.",
+        "operationId": "updateInstance",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "ID of the process to retrieve",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "instance_id",
+            "in": "path",
+            "description": "ID of the instance to retrieve",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "InstanceUpdateItem",
+            "description": "Instance object to edit",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/InstanceUpdateItem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Instance updated",
+            "schema": {
+              "$ref": "#/definitions/InstanceItem"
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "client",
+          "process instance"
+        ],
+        "description": "This method deletes an instance using the instance ID and the process ID.",
+        "operationId": "deleteInstance",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "instance_id",
+            "in": "path",
+            "description": "ID of the instance to delete",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Instance successfully deleted",
+            "schema": {
+              "$ref": "#/definitions/ResultSuccess"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "500": {
+            "description": "Deletion error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    },
+    "/processes/{process_id}/instances/{instance_id}/datamodel": {
+      "get": {
+        "tags": [
+          "client",
+          "process instance"
+        ],
+        "description": "This method returns the instance data model and lets the user work with it directly.",
+        "operationId": "findDataModel",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "ID of the process to return",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "instance_id",
+            "in": "path",
+            "description": "ID of the instance to return",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number to fetch",
+            "required": false,
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Amount of items per page",
+            "required": false,
+            "type": "integer",
+            "default": 15,
+            "maximum": 100,
+            "minimum": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Data model retrieved",
+            "schema": {
+              "$ref": "#/definitions/DataModelItem_1"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    },
+    "/processes/{process_id}/instances/{instance_id}/tokens": {
+      "get": {
+        "tags": [
+          "client",
+          "process instance"
+        ],
+        "description": "This method retrieves tokens related to the process and instance using the process and instance IDs",
+        "operationId": "findTokens",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "instance_id",
+            "in": "path",
+            "description": "Instance ID related to the process",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number to fetch",
+            "required": false,
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Amount of items per page",
+            "required": false,
+            "type": "integer",
+            "default": 15,
+            "maximum": 100,
+            "minimum": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of tokens retrieved",
+            "schema": {
+              "$ref": "#/definitions/TokenCollection"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    },
+    "/processes/{process_id}/tasks": {
+      "get": {
+        "tags": [
+          "client",
+          "task"
+        ],
+        "description": "This method is intended for returning a list of all tasks related to the process.",
+        "operationId": "findTasks",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "ID of the process relative to the task",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number to fetch",
+            "required": false,
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Amount of items per page",
+            "required": false,
+            "type": "integer",
+            "default": 15,
+            "maximum": 100,
+            "minimum": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tasks list",
+            "schema": {
+              "$ref": "#/definitions/TaskCollection"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "client",
+          "task"
+        ],
+        "description": "This method creates a new task.",
+        "operationId": "addTask",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID related to the task",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "TaskCreateItem",
+            "description": "JSON API with the task object to add",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TaskCreateItem"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Task created",
+            "schema": {
+              "$ref": "#/definitions/TaskItem"
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        },
+        "x-code-samples": [
+          {
+            "lang": "Java",
+            "source": "String processId = addProcessItem(\"ProcessForTask\").getData().getId();\r\n        TaskCreateItem taskCreateItem = new TaskCreateItem();\r\n        Task task = new Task();\r\n        TaskAttributes attributes = new TaskAttributes();\r\n        attributes.setName(\"Name\");\r\n        attributes.setType(TaskAttributes.TypeEnum.USER_TASK);\r\n        attributes.setProcessId(processId);\r\n        attributes.setAssignType(TaskAttributes.AssignTypeEnum.CYCLIC);\r\n        attributes.setTransferFly(true);\r\n        attributes.setCanUpload(true);\r\n        attributes.setViewUpload(true);\r\n        attributes.setViewAdditionalDocumentation(true);\r\n        attributes.setStart(false);\r\n        attributes.setSendLastEmail(true);\r\n        attributes.setSelfserviceTimeout(10);\r\n        task.setAttributes(attributes);\r\n        taskCreateItem.setData(task);\r\n        TaskItem response = api.addTask(processId, taskCreateItem);"
+          },
+          {
+            "lang": "Perl",
+            "source": "my $process_create_item =  ProcessMaker::PMIO::Object::ProcessCreateItem->new( \"data\" => {\"type\" => \"process\", \"attributes\" => { \"name\" => \"[NAME]\", \"type\" => \"NORMAL\", \"status\" => \"ACTIVE\", \"duration_by\" => \"WORKING_DAYS\", \"design_access\" => \"PUBLIC\" } } );\r\nmy $res = $test_api->add_process(\"process_create_item\" => $process_create_item);\r\nmy $res_hash = $res->to_hash();\r\nmy $pid = $res_hash->{\"data\"}->{\"id\"};\r\nmy $task_create_item = ProcessMaker::PMIO::Object::TaskCreateItem->new(\"data\" => {\"type\" => \"task\", \"attributes\" => {\"name\" => \"[NAME]\"}});\r\n$res = $test_api->add_task(\"process_id\" => $pid, \"task_create_item\" => $task_create_item);"
+          }
+        ]
+      }
+    },
+    "/processes/{process_id}/tasks/{task_id}": {
+      "get": {
+        "tags": [
+          "client",
+          "task"
+        ],
+        "description": "This method retrieves a task using its ID.",
+        "operationId": "findTaskById",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "ID of the process to return",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "task_id",
+            "in": "path",
+            "description": "ID of the task to return",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task retrieved",
+            "schema": {
+              "$ref": "#/definitions/TaskItem"
+            }
+          },
+          "404": {
+            "description": "Task not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "client",
+          "task"
+        ],
+        "description": "This method is for updating an existing task.",
+        "operationId": "updateTask",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "ID of the process to fetch",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "task_id",
+            "in": "path",
+            "description": "ID of the task to fetch",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "TaskUpdateItem",
+            "description": "Task object to edit",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TaskUpdateItem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON API response with updated Task object",
+            "schema": {
+              "$ref": "#/definitions/TaskItem"
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "client",
+          "task"
+        ],
+        "description": "This method deletes a task using the task ID and the process ID.",
+        "operationId": "deleteTask",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "task_id",
+            "in": "path",
+            "description": "ID of a task to delete",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item successfully deleted",
+            "schema": {
+              "$ref": "#/definitions/ResultSuccess"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "500": {
+            "description": "Deletion error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    },
+    "/processes/{process_id}/tasks/{task_id}/connectors": {
+      "get": {
+        "tags": [
+          "client",
+          "task"
+        ],
+        "description": "This method returns all task connectors related to the run process and task.",
+        "operationId": "findTaskConnectors",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "ID of the process to fetch",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "task_id",
+            "in": "path",
+            "description": "ID of the task to fetch",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number to fetch",
+            "required": false,
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Amount of items per page",
+            "required": false,
+            "type": "integer",
+            "default": 15,
+            "maximum": 100,
+            "minimum": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task connectors list",
+            "schema": {
+              "$ref": "#/definitions/TaskConnectorsCollection"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "client",
+          "task"
+        ],
+        "description": "This method is for creating a new task connector",
+        "operationId": "addTaskConnector",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "ID of the process to fetch",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "task_id",
+            "in": "path",
+            "description": "ID of the task to fetch",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "TaskConnectorCreateItem",
+            "description": "JSON API with the TaskConnector object to add",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TaskConnectorCreateItem"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created task connector response",
+            "schema": {
+              "$ref": "#/definitions/TaskConnector_1"
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    },
+    "/processes/{process_id}/tasks/{task_id}/connectors/{connector_id}": {
+      "get": {
+        "tags": [
+          "client",
+          "task"
+        ],
+        "description": "This method is for retrieving a task connector based on its ID.",
+        "operationId": "findTaskConnectorById",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "ID of the process to fetch",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "task_id",
+            "in": "path",
+            "description": "ID of the task to fetch",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "connector_id",
+            "in": "path",
+            "description": "ID of TaskConnector to fetch",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task Connector Item response",
+            "schema": {
+              "$ref": "#/definitions/TaskConnector_1"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "client",
+          "task"
+        ],
+        "description": "This method updates the existing task connector with new parameter values.",
+        "operationId": "updateTaskConnector",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "ID of the process to fetch",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "task_id",
+            "in": "path",
+            "description": "ID of the task to fetch",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "connector_id",
+            "in": "path",
+            "description": "ID of the task connector to fetch",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "TaskConnectorUpdateItem",
+            "description": "TaskConnector object to edit",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TaskConnectorUpdateItem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON API response with updated TaskConnector object",
+            "schema": {
+              "$ref": "#/definitions/TaskConnector_1"
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "client",
+          "task"
+        ],
+        "description": "This method is for deleting a single task connector based on task ID, the process ID and the Connector ID.",
+        "operationId": "deleteTaskConnector",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "ID of the process item to fetch",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "task_id",
+            "in": "path",
+            "description": "ID of the task item to fetch",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "connector_id",
+            "in": "path",
+            "description": "ID of TaskConnector to fetch",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item successfully deleted",
+            "schema": {
+              "$ref": "#/definitions/ResultSuccess"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "500": {
+            "description": "Deletion error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    },
+    "/processes/{process_id}/tasks/{task_id}/groups": {
+      "post": {
+        "tags": [
+          "client",
+          "task"
+        ],
+        "description": "This method synchronizes one or more groups with a task.",
+        "operationId": "syncGroupsToTask",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "task_id",
+            "in": "path",
+            "description": "ID of the task to modify",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "TaskSyncGroupsItem",
+            "description": "JSON API response with group IDs to sync",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TaskSyncGroupsItem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON API response with result details",
+            "schema": {
+              "$ref": "#/definitions/ResultSuccess"
+            }
+          },
+          "404": {
+            "description": "Group(s) not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "500": {
+            "description": "Error syncing Group(s)",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "client",
+          "task"
+        ],
+        "description": "This method assigns group(s) to the chosen task",
+        "operationId": "addGroupsToTask",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "task_id",
+            "in": "path",
+            "description": "ID of the task to be modified",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "TaskAddGroupsItem",
+            "description": "JSON API with Group IDs to add",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TaskAddGroupsItem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Group(s) was assigned to the task",
+            "schema": {
+              "$ref": "#/definitions/ResultSuccess"
+            }
+          },
+          "404": {
+            "description": "Group(s) not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "422": {
+            "description": "Unprocessable entity",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "500": {
+            "description": "Unknown error while adding Group(s) to the task",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        },
+        "x-code-samples": [
+          {
+            "lang": "PHP",
+            "source": "$taskAddGroupsItem = new TaskAddGroupsItem([\r\n   'data' => new GroupIds([\r\n      'groups' => [$group->getData()->getId()]\r\n   ])\r\n ]);\r\n$apiInstance->addGroupsToTask(\r\n       $process->getData()->getId(),\r\n       $userTask->getData()->getId(),\r\n       $taskAddGroupsItem\r\n      );"
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "client",
+          "task"
+        ],
+        "description": "This method removes groups from a task.",
+        "operationId": "removeGroupsFromTask",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "task_id",
+            "in": "path",
+            "description": "Task ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "TaskRemoveGroupsItem",
+            "description": "JSON API response with Group IDs to remove",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TaskRemoveGroupsItem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Groups removed from task",
+            "schema": {
+              "$ref": "#/definitions/ResultSuccess"
+            }
+          },
+          "404": {
+            "description": "Group(s) not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "422": {
+            "description": "Unprocessable entity",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "500": {
+            "description": "Error removing group(s)",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    },
+    "/processes/{process_id}/tasks/{task_id}/inputoutput": {
+      "get": {
+        "tags": [
+          "client",
+          "input/output"
+        ],
+        "description": "This method retrieves all existing Input/Output objects in the related task instance.",
+        "operationId": "findInputOutputs",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID related to Input/Output object",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "task_id",
+            "in": "path",
+            "description": "Task instance ID related to Input/Output object",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number to fetch",
+            "required": false,
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Amount of items per page",
+            "required": false,
+            "type": "integer",
+            "default": 15,
+            "maximum": 100,
+            "minimum": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of Input/Outputs retrieved",
+            "schema": {
+              "$ref": "#/definitions/InputOutputCollection"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "client",
+          "input/output"
+        ],
+        "description": "This method creates a new Input/Output object.",
+        "operationId": "addInputOutput",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID related to Input/Output object",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "task_id",
+            "in": "path",
+            "description": "Task instance ID related to Input/Output object",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "InputOutputCreateItem",
+            "description": "Create and add a new Input/Output object with JSON API",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/InputOutputCreateItem"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The InputOutput object was created",
+            "schema": {
+              "$ref": "#/definitions/InputOutputItem"
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    },
+    "/processes/{process_id}/tasks/{task_id}/inputoutput/{inputoutput_uid}": {
+      "get": {
+        "tags": [
+          "client",
+          "input/output"
+        ],
+        "description": "This method retrieves an Input/Output object using its ID.",
+        "operationId": "findInputOutputById",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID related to the Input/Output object",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "task_id",
+            "in": "path",
+            "description": "Task instance ID related to the Input/Output object",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "inputoutput_uid",
+            "in": "path",
+            "description": "ID of Input/Output to return",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Input/Output object retrieved",
+            "schema": {
+              "$ref": "#/definitions/InputOutputItem"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "client",
+          "input/output"
+        ],
+        "description": "This method updates an existing Input/Output object.",
+        "operationId": "updateInputOutput",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID related to the Input/Output object",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "task_id",
+            "in": "path",
+            "description": "Task instance ID related to the Input/Output object",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "inputoutput_uid",
+            "in": "path",
+            "description": "ID of Input/Output to retrieve",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "InputOutputUpdateItem",
+            "description": "Input/Output object to edit",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/InputOutputUpdateItem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Input/Output object updated",
+            "schema": {
+              "$ref": "#/definitions/InputOutputItem"
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "client",
+          "input/output"
+        ],
+        "description": "This method deletes the Input/Output based on the Input/Output ID, process ID and task ID.",
+        "operationId": "deleteInputOutput",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID related to the Input/Output object",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "task_id",
+            "in": "path",
+            "description": "Task instance ID related to Input/Output object",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "inputoutput_uid",
+            "in": "path",
+            "description": "Input/Output ID to fetch",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item successfully deleted",
+            "schema": {
+              "$ref": "#/definitions/ResultSuccess"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "500": {
+            "description": "Deletion error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    },
+    "/task_instances": {
+      "get": {
+        "tags": [
+          "client",
+          "task"
+        ],
+        "description": "This method retrieves all existing task instances.",
+        "operationId": "findTaskInstances",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number to fetch",
+            "required": false,
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Amount of items per page",
+            "required": false,
+            "type": "integer",
+            "default": 15,
+            "maximum": 100,
+            "minimum": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of task instances retrieved",
+            "schema": {
+              "$ref": "#/definitions/TaskInstanceCollection"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    },
+    "/task_instances/{task_instance_id}": {
+      "get": {
+        "tags": [
+          "client",
+          "task"
+        ],
+        "description": "This method retrieves a task instance based on its ID.",
+        "operationId": "findTaskInstanceById",
+        "parameters": [
+          {
+            "name": "task_instance_id",
+            "in": "path",
+            "description": "ID of task instance to return",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number to fetch",
+            "required": false,
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Amount of items per page",
+            "required": false,
+            "type": "integer",
+            "default": 15,
+            "maximum": 100,
+            "minimum": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task instance retrieved",
+            "schema": {
+              "$ref": "#/definitions/inline_response_200"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "client",
+          "task"
+        ],
+        "description": "This method updates an existing task instance.",
+        "operationId": "updateTaskInstance",
+        "parameters": [
+          {
+            "name": "task_instance_id",
+            "in": "path",
+            "description": "ID of the task instance to retrieve",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "TaskInstanceUpdateItem",
+            "description": "Task instance object to update",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TaskInstanceUpdateItem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task instance updated",
+            "schema": {
+              "$ref": "#/definitions/inline_response_200"
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": [
+          "client",
+          "users"
+        ],
+        "description": "This method returns all existing users in the system.",
+        "operationId": "findUsers",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number to fetch",
+            "required": false,
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Amount of items per page",
+            "required": false,
+            "type": "integer",
+            "default": 15,
+            "maximum": 100,
+            "minimum": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of users retrieved",
+            "schema": {
+              "$ref": "#/definitions/UserCollection"
+            },
+            "headers": {
+              "X-RateLimit-Limit": {
+                "type": "integer",
+                "description": "The number of allowed requests in the current period"
+              },
+              "X-RateLimit-Remaining": {
+                "type": "integer",
+                "description": "The number of remaining requests in the current period"
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "client",
+          "users"
+        ],
+        "description": "This method creates a new user in the system. The client_id will appear in the results.\n\nThe `client_id` is required to obtain a `client_secret` and then you will be able to use it in an Oauth authorization key. Refer to [Oauth Client APIs](#tag/oauth)",
+        "operationId": "addUser",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "UserCreateItem",
+            "description": "JSON API with the User object to add",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserCreateItem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "New user created",
+            "schema": {
+              "$ref": "#/definitions/UserItem"
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        },
+        "x-code-samples": [
+          {
+            "lang": "PHP",
+            "source": "$bobAttr = new UserAttributes();\r\n$bobAttr->setLastname('Doe');\r\n$bobAttr->setFirstname('Bob');\r\n$bobAttr->setUsername('Bob');\r\n$bobAttr->setPassword('Bobpassword');\r\n$bobAttr->setEmail('bob@processmaker.com');\r\n\r\n/** @var UserItem $bob */\r\n$bob = $client->addUser(new UserCreateItem([\r\n    'data' => new User(['attributes' => $bobAttr])\r\n]));"
+          },
+          {
+            "lang": "Java",
+            "source": "UserAttributes userAttributes = new UserAttributes();\r\n        userAttributes.setUsername(\"testUser\"+Math.random());\r\n        userAttributes.setPassword(\"123\");\r\n        userAttributes.setLastname(\"testLast\");\r\n        userAttributes.setFirstname(\"testFirst\");\r\n        userAttributes.setEmail(\"testEmail@email.com\");\r\n\r\n        User user = new User();\r\n        user.setAttributes(userAttributes);\r\n        UserCreateItem userCreateItem = new UserCreateItem();\r\n        userCreateItem.setData(user);\r\n        this.user = userApi.addUser(userCreateItem);"
+          },
+          {
+            "lang": "Python",
+            "source": "att = UserAttributes()\natt.firstname = 'Johnny'\natt.lastname = 'Doe'\natt.password = 'password'\natt.username = 'Username {}'.format(randint(10000000, 99999999))\natt.email = 'email@at.com'\nr = self.api.add_user(UserCreateItem(data=User(attributes=att)))"
+          },
+          {
+            "lang": "Perl",
+            "source": "my $user_att = ProcessMaker::PMIO::Object::UserAttributes->new(\"email\" => \"test_email\\@testdomain.com\", \"password\" => \"[PASSWORD]\", \"username\" => \"USER\" . int(rand(100000)) , \"firstname\" => \"[FIRST NAME]\", \"lastname\" => \"[LAST NAME]\");\r\nmy $user_create_item = ProcessMaker::PMIO::Object::UserCreateItem->new(\"data\" => { \"attributes\" => $user_att } );\r\nmy $res = $test_api->add_user(\"user_create_item\" => $user_create_item);"
+          }
+        ]
+      }
+    },
+    "/users/myself": {
+      "get": {
+        "tags": [
+          "client",
+          "users"
+        ],
+        "description": "This method returns user information using a token.",
+        "operationId": "myselfUser",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number to fetch",
+            "required": false,
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Amount of items per page",
+            "required": false,
+            "type": "integer",
+            "default": 15,
+            "maximum": 100,
+            "minimum": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User information retrieved",
+            "schema": {
+              "$ref": "#/definitions/UserItem"
+            }
+          },
+          "401": {
+            "description": "Unauthorized access",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "tags": [
+          "client",
+          "users"
+        ],
+        "description": "This method returns a user using its ID.",
+        "operationId": "findUserById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the user to return",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User retrieved",
+            "schema": {
+              "$ref": "#/definitions/UserItem"
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        },
+        "x-code-samples": [
+          {
+            "lang": "Perl",
+            "source": "my $user_item = $test_api->myself_user(\"page\" => 2, \"per_page\" => 10);\r\nmy $user_item_hash = $user_item->to_hash();\r\nmy $user_id = $user_item_hash->{\"data\"}->{\"id\"};\r\n$user_item = $test_api->find_user_by_id(\"id\" => $user_id);\r\n"
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "client",
+          "users"
+        ],
+        "description": "This method updates an existing user.",
+        "operationId": "updateUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of user to retrieve",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "UserUpdateItem",
+            "description": "User object for update",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserUpdateItem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User updated",
+            "schema": {
+              "$ref": "#/definitions/UserItem"
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        },
+        "x-code-samples": [
+          {
+            "lang": "Perl",
+            "source": "my $user_item = $users_api->myself_user(\"page\" => 2, \"per_page\" => 10);\r\nmy $user_item_hash = $user_item->to_hash();\r\nmy $user_id = $user_item_hash->{\"data\"}->{\"id\"};\r\nmy $user_update_item = ProcessMaker::PMIO::Object::UserUpdateItem->new(\"data\" => { \"type\" => \"user\", \"attributes\" => {\"lastname\" => \"Washington\" } });\r\nmy $res = $test_api->update_user(\"id\" => $user_id, \"user_update_item\" => $user_update_item);"
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "client",
+          "users"
+        ],
+        "description": "This method deletes a user from the system.",
+        "operationId": "deleteUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of user to delete",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User was successfully deleted",
+            "schema": {
+              "$ref": "#/definitions/ResultSuccess"
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "500": {
+            "description": "The server encountered an unexpected condition when deleting the user",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    },
+    "/users/{user_id}/clients": {
+      "get": {
+        "tags": [
+          "client",
+          "oauth"
+        ],
+        "description": "This method retrieves all existing Oauth clients belonging to a user.",
+        "operationId": "findOauthClients",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "User ID related to the Oauth clients",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number to fetch",
+            "required": false,
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Amount of items per page",
+            "required": false,
+            "type": "integer",
+            "default": 15,
+            "maximum": 100,
+            "minimum": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of Oauth clients retrieved",
+            "schema": {
+              "$ref": "#/definitions/OauthClientCollection"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "client",
+          "oauth"
+        ],
+        "description": "This method creates a new Oauth client for the user.",
+        "operationId": "addOauthClient",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "ID of the user related to the Oauth client",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "OauthClientCreateItem",
+            "description": "JSON API with the Oauth Client object to add",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OauthClientCreateItem"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The Oauth client was created",
+            "schema": {
+              "$ref": "#/definitions/OauthClientItem"
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    },
+    "/users/{user_id}/clients/{client_id}": {
+      "get": {
+        "tags": [
+          "client",
+          "oauth"
+        ],
+        "description": "This method retrieves an Oauth client for the User based on its ID.\n\nThe response contains the `client_secret` required to obtain the `access_token`.",
+        "operationId": "findOauthClientById",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "ID of user to retrieve",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "client_id",
+            "in": "path",
+            "description": "ID of Oauth client to retrieve",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Oauth Client retrieved",
+            "schema": {
+              "$ref": "#/definitions/OauthClientItem"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        },
+        "x-code-samples": [
+          {
+            "lang": "PHP",
+            "source": "/** Getting additional credentials to get access token for created users */\r\n\r\n    /** @var ClientItem $bobCredentials */\r\n    $bobCredentials = $apiInstance->findOauthClientById($bob->getData()->getId(), $bob->getData()->getAttributes()->getClients()[0]);\r\n    print_r($bobCredentials);"
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "client"
+        ],
+        "description": "This method updates an existing Oauth client.",
+        "operationId": "updateOauthClient",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "ID of user to retrieve",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "client_id",
+            "in": "path",
+            "description": "ID of Oauth client to retrieve",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "OauthClientUpdateItem",
+            "description": "Oauth Client object to edit",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OauthClientUpdateItem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Oauth Client updated",
+            "schema": {
+              "$ref": "#/definitions/OauthClientItem"
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "client"
+        ],
+        "description": "This method deletes an Oauth client using the Oauth client and user IDs.",
+        "operationId": "deleteOauthClient",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "User ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "client_id",
+            "in": "path",
+            "description": "ID of Oauth client to delete",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item was successfully deleted",
+            "schema": {
+              "$ref": "#/definitions/ResultSuccess"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "500": {
+            "description": "Deletion error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/errorArray"
+            }
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "PasswordGrant": {
+      "description": "To get the `access_token` and `refresh_token` refer to [getting authorization key](#section/How-to-create-a-new-user/Getting-authorization-key) section.",
+      "type": "apiKey",
+      "in": "header",
+      "name": "Authorization"
+    }
+  },
+  "definitions": {
+    "Token": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b31"
+        },
+        "type": {
+          "type": "string",
+          "example": "token",
+          "default": "token"
+        },
+        "attributes": {
+          "$ref": "#/definitions/Token_attributes"
+        }
+      }
+    },
+    "TaskConnector": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b31"
+        },
+        "type": {
+          "type": "string",
+          "example": "task_connector",
+          "default": "task_connector"
+        },
+        "attributes": {
+          "$ref": "#/definitions/TaskConnector_attributes"
+        }
+      }
+    },
+    "EventConnector": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b31"
+        },
+        "type": {
+          "type": "string",
+          "example": "event_connector",
+          "default": "event_connector"
+        },
+        "attributes": {
+          "$ref": "#/definitions/EventConnector_attributes"
+        }
+      }
+    },
+    "OauthClient": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "example": 1
+        },
+        "type": {
+          "type": "string",
+          "example": "client",
+          "default": "client"
+        },
+        "attributes": {
+          "$ref": "#/definitions/OauthClient_attributes"
+        }
+      }
+    },
+    "InputOutput": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b31"
+        },
+        "type": {
+          "type": "string",
+          "example": "input_output",
+          "default": "input_output"
+        },
+        "attributes": {
+          "$ref": "#/definitions/InputOutput_attributes"
+        }
+      }
+    },
+    "BpmnFile": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "example": "process",
+          "default": "process"
+        },
+        "attributes": {
+          "$ref": "#/definitions/BpmnFile_attributes"
+        }
+      }
+    },
+    "TaskInstance": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b31"
+        },
+        "type": {
+          "type": "string",
+          "example": "task_instance",
+          "default": "task_instance"
+        },
+        "attributes": {
+          "$ref": "#/definitions/TaskInstance_attributes"
+        }
+      }
+    },
+    "DataModelItem": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b31"
+        },
+        "type": {
+          "type": "string",
+          "example": "data_model",
+          "default": "data_model"
+        },
+        "attributes": {
+          "$ref": "#/definitions/DataModelItem_attributes"
+        }
+      }
+    },
+    "DataModel": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "example": "data_model",
+          "default": "data_model"
+        },
+        "attributes": {
+          "$ref": "#/definitions/DataModel_attributes"
+        }
+      }
+    },
+    "Instance": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b31"
+        },
+        "type": {
+          "type": "string",
+          "example": "instance",
+          "default": "instance"
+        },
+        "attributes": {
+          "$ref": "#/definitions/Instance_attributes"
+        }
+      }
+    },
+    "Flow": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b31"
+        },
+        "type": {
+          "type": "string",
+          "example": "flow",
+          "default": "flow"
+        },
+        "attributes": {
+          "$ref": "#/definitions/Flow_attributes"
+        }
+      }
+    },
+    "Gateway": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b31"
+        },
+        "type": {
+          "type": "string",
+          "example": "gateway",
+          "default": "gateway"
+        },
+        "attributes": {
+          "$ref": "#/definitions/Gateway_attributes"
+        }
+      }
+    },
+    "Event": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b31"
+        },
+        "type": {
+          "type": "string",
+          "example": "event",
+          "default": "event"
+        },
+        "attributes": {
+          "$ref": "#/definitions/Event_attributes"
+        }
+      }
+    },
+    "Task": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b31"
+        },
+        "type": {
+          "type": "string",
+          "example": "task",
+          "default": "task"
+        },
+        "attributes": {
+          "$ref": "#/definitions/Task_attributes"
+        }
+      }
+    },
+    "Process": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b31"
+        },
+        "type": {
+          "type": "string",
+          "example": "process",
+          "default": "process"
+        },
+        "attributes": {
+          "$ref": "#/definitions/Process_attributes"
+        }
+      }
+    },
+    "Group": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b31"
+        },
+        "type": {
+          "type": "string",
+          "example": "group",
+          "default": "group"
+        },
+        "attributes": {
+          "$ref": "#/definitions/Group_attributes"
+        }
+      }
+    },
+    "UserIds": {
+      "type": "object",
+      "required": [
+        "users"
+      ],
+      "properties": {
+        "users": {
+          "type": "array",
+          "description": "User IDs array",
+          "items": {
+            "type": "string",
+            "example": "9d705617-cc29-482a-85ff-7f7292f72b31"
+          }
+        }
+      }
+    },
+    "GroupIds": {
+      "type": "object",
+      "required": [
+        "groups"
+      ],
+      "properties": {
+        "groups": {
+          "type": "array",
+          "description": "Group IDs array",
+          "items": {
+            "type": "string",
+            "example": "9d705617-cc29-482a-85ff-7f7292f72b31"
+          }
+        }
+      }
+    },
+    "ResultSuccess": {
+      "type": "object",
+      "properties": {
+        "meta": {
+          "$ref": "#/definitions/ResultSuccess_meta"
+        }
+      }
+    },
+    "User": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b31"
+        },
+        "type": {
+          "type": "string",
+          "example": "user",
+          "default": "user"
+        },
+        "attributes": {
+          "$ref": "#/definitions/User_attributes"
+        }
+      }
+    },
+    "Pagination": {
+      "type": "object",
+      "required": [
+        "count",
+        "current_page",
+        "per_page",
+        "total",
+        "total_pages"
+      ],
+      "properties": {
+        "total": {
+          "type": "integer",
+          "example": 125
+        },
+        "count": {
+          "type": "integer",
+          "example": 25
+        },
+        "per_page": {
+          "type": "integer",
+          "example": 25
+        },
+        "current_page": {
+          "type": "integer",
+          "example": 2
+        },
+        "total_pages": {
+          "type": "integer",
+          "example": 30
+        },
+        "links": {
+          "$ref": "#/definitions/Pagination_links"
+        }
+      }
+    },
+    "MetaLog": {
+      "type": "object",
+      "required": [
+        "import_log"
+      ],
+      "properties": {
+        "import_log": {
+          "type": "string"
+        }
+      }
+    },
+    "Meta": {
+      "type": "object",
+      "properties": {
+        "pagination": {
+          "$ref": "#/definitions/Pagination"
+        }
+      }
+    },
+    "errorArray": {
+      "type": "object",
+      "required": [
+        "errors"
+      ],
+      "properties": {
+        "errors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Error"
+          }
+        }
+      }
+    },
+    "Error": {
+      "type": "object",
+      "required": [
+        "code"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "detail": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "GroupCollection": {
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Group"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/Meta"
+        }
+      },
+      "description": "JSON API response with a collection of the groups in an array"
+    },
+    "GroupCreateItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Group"
+        }
+      }
+    },
+    "GroupItem": {
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Group"
+        }
+      }
+    },
+    "GroupUpdateItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Group"
+        }
+      }
+    },
+    "GroupAddUsersItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/UserIds"
+        }
+      }
+    },
+    "GroupSyncUsersItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/UserIds"
+        }
+      }
+    },
+    "GroupRemoveUsersItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/UserIds"
+        }
+      }
+    },
+    "TaskInstanceCollection": {
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TaskInstance"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/Meta"
+        }
+      },
+      "description": "JSON API response with the collection of task instances in an  array"
+    },
+    "ProcessCollection": {
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Process"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/Meta"
+        }
+      },
+      "description": "JSON API response with a collection of the processes in an array"
+    },
+    "ProcessCreateItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Process"
+        }
+      }
+    },
+    "ProcessItem": {
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Process"
+        }
+      }
+    },
+    "bpmnImportItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/BpmnFile"
+        }
+      }
+    },
+    "ProcessCollection_1": {
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Process"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/MetaLog"
+        }
+      }
+    },
+    "ProcessUpdateItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Process"
+        }
+      }
+    },
+    "DataModelCollection": {
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DataModelItem"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/Meta"
+        }
+      },
+      "description": "JSON API response with the collection of DataModels in an array"
+    },
+    "EventCollection": {
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Event"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/Meta"
+        }
+      },
+      "description": "JSON API response with a collection of the events in an array"
+    },
+    "EventCreateItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Event"
+        }
+      }
+    },
+    "EventItem": {
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Event"
+        }
+      }
+    },
+    "EventUpdateItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Event"
+        }
+      }
+    },
+    "EventConnectorsCollection": {
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EventConnector"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/Meta"
+        }
+      },
+      "description": "JSON API Response with collection of Items in array"
+    },
+    "EventConnectorCreateItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/EventConnector"
+        }
+      }
+    },
+    "EventConnector_1": {
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/EventConnector"
+        }
+      }
+    },
+    "EventConnectorUpdateItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/EventConnector"
+        }
+      }
+    },
+    "TriggerEventCreateItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/DataModel"
+        }
+      }
+    },
+    "DataModelItem_1": {
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/DataModelItem"
+        }
+      }
+    },
+    "FlowCollection": {
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Flow"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/Meta"
+        }
+      },
+      "description": "JSON API response with the collection of the flow in an array"
+    },
+    "FlowCreateItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Flow"
+        }
+      }
+    },
+    "FlowItem": {
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Flow"
+        }
+      }
+    },
+    "FlowUpdateItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Flow"
+        }
+      }
+    },
+    "GatewayCollection": {
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Gateway"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/Meta"
+        }
+      },
+      "description": "JSON API Response with collection of Items in array"
+    },
+    "GatewayCreateItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Gateway"
+        }
+      }
+    },
+    "GatewayItem": {
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Gateway"
+        }
+      }
+    },
+    "GatewayUpdateItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Gateway"
+        }
+      }
+    },
+    "InstanceCollection": {
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Instance"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/Meta"
+        }
+      },
+      "description": "JSON API response with a collection of the instances in an array"
+    },
+    "InstanceCreateItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Instance"
+        }
+      }
+    },
+    "InstanceItem": {
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Instance"
+        }
+      }
+    },
+    "InstanceUpdateItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Instance"
+        }
+      }
+    },
+    "TokenCollection": {
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Token"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/Meta"
+        }
+      },
+      "description": "JSON API response with a collection of the tokens in an array"
+    },
+    "TaskCollection": {
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Task"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/Meta"
+        }
+      },
+      "description": "JSON API Response with collection of Items in array"
+    },
+    "TaskCreateItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Task"
+        }
+      }
+    },
+    "TaskItem": {
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Task"
+        }
+      }
+    },
+    "TaskUpdateItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Task"
+        }
+      }
+    },
+    "TaskConnectorsCollection": {
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TaskConnector"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/Meta"
+        }
+      },
+      "description": "JSON API Response with collection of Items in array"
+    },
+    "TaskConnectorCreateItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/TaskConnector"
+        }
+      }
+    },
+    "TaskConnector_1": {
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/TaskConnector"
+        }
+      }
+    },
+    "TaskConnectorUpdateItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/TaskConnector"
+        }
+      }
+    },
+    "TaskAddGroupsItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/GroupIds"
+        }
+      }
+    },
+    "TaskSyncGroupsItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/GroupIds"
+        }
+      }
+    },
+    "TaskRemoveGroupsItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/GroupIds"
+        }
+      }
+    },
+    "InputOutputCollection": {
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/InputOutput"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/Meta"
+        }
+      },
+      "description": "JSON API response with a collection of the input/outputs in the array"
+    },
+    "InputOutputCreateItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/InputOutput"
+        }
+      }
+    },
+    "InputOutputItem": {
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/InputOutput"
+        }
+      }
+    },
+    "InputOutputUpdateItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/InputOutput"
+        }
+      }
+    },
+    "inline_response_200": {
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/TaskInstance"
+        }
+      }
+    },
+    "TaskInstanceUpdateItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/TaskInstance"
+        }
+      }
+    },
+    "UserCollection": {
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/User"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/Meta"
+        }
+      },
+      "description": "JSON API response with the collection of users in an array"
+    },
+    "UserCreateItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/User"
+        }
+      }
+    },
+    "UserItem": {
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/User"
+        }
+      }
+    },
+    "UserUpdateItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/User"
+        }
+      }
+    },
+    "OauthClientCollection": {
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OauthClient"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/Meta"
+        }
+      },
+      "description": "JSON API response with a collection of the Oauth clients in an array"
+    },
+    "OauthClientCreateItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/OauthClient"
+        }
+      }
+    },
+    "OauthClientItem": {
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/OauthClient"
+        }
+      }
+    },
+    "OauthClientUpdateItem": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/OauthClient"
+        }
+      }
+    },
+    "Token_attributes": {
+      "required": [
+        "instance_id"
+      ],
+      "properties": {
+        "instance_id": {
+          "type": "string",
+          "example": "Instance ID"
+        },
+        "flow_id": {
+          "type": "string",
+          "example": "Flow ID"
+        },
+        "token_key": {
+          "type": "string"
+        },
+        "token_count": {
+          "type": "integer"
+        },
+        "initiator_object_id": {
+          "type": "string"
+        },
+        "initiator_object_type": {
+          "type": "string"
+        },
+        "target_object_id": {
+          "type": "string"
+        },
+        "target_object_type": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        },
+        "updated_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        }
+      }
+    },
+    "TaskConnector_attributes": {
+      "properties": {
+        "task_id": {
+          "type": "integer"
+        },
+        "connector_class": {
+          "type": "string",
+          "default": "HttpConnector"
+        },
+        "input_parameters": {
+          "type": "string",
+          "default": "[]"
+        },
+        "output_parameters": {
+          "type": "string",
+          "default": "[]"
+        },
+        "async_before": {
+          "type": "boolean"
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        },
+        "updated_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        }
+      }
+    },
+    "EventConnector_attributes": {
+      "properties": {
+        "event_id": {
+          "type": "integer"
+        },
+        "connector_class": {
+          "type": "string",
+          "default": "CorrelationKeys"
+        },
+        "input_parameters": {
+          "type": "string",
+          "default": "[]"
+        },
+        "output_parameters": {
+          "type": "string",
+          "default": "[]"
+        },
+        "async_before": {
+          "type": "boolean"
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        },
+        "updated_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        }
+      }
+    },
+    "OauthClient_attributes": {
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "secret": {
+          "type": "string",
+          "example": "1WfPZS8TepSKgnure5FHUOyvT8340fQH8cz4ISN2"
+        },
+        "name": {
+          "type": "string",
+          "example": "Oauth Client Name"
+        },
+        "personal_access_client": {
+          "type": "boolean"
+        },
+        "password_client": {
+          "type": "boolean"
+        },
+        "revoked": {
+          "type": "boolean"
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        },
+        "updated_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        }
+      }
+    },
+    "InputOutput_attributes": {
+      "required": [
+        "input_parameters",
+        "output_parameters"
+      ],
+      "properties": {
+        "input_parameters": {
+          "type": "object",
+          "properties": {}
+        },
+        "output_parameters": {
+          "type": "object",
+          "properties": {}
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        },
+        "updated_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        }
+      }
+    },
+    "BpmnFile_attributes": {
+      "required": [
+        "bpmn"
+      ],
+      "properties": {
+        "bpmn": {
+          "type": "string",
+          "example": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>...</xml>"
+        }
+      }
+    },
+    "TaskInstance_attributes": {
+      "required": [
+        "instance_id",
+        "priority",
+        "status",
+        "task_id"
+      ],
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b11"
+        },
+        "instance_id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b11"
+        },
+        "group_id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b11"
+        },
+        "user_id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b11"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "INITIAL",
+            "DELEGATED",
+            "STARTED",
+            "CANCELLED",
+            "FINISHED",
+            "COMPLETE",
+            "PAUSED"
+          ],
+          "default": "INITIAL"
+        },
+        "priority": {
+          "type": "string",
+          "enum": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "default": "3"
+        },
+        "delegate_date": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        },
+        "start_date": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        },
+        "finish_date": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        },
+        "task_due_date": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        },
+        "risk_date": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        },
+        "duration": {
+          "type": "integer"
+        },
+        "instance_overdue_percentage": {
+          "type": "number",
+          "format": "double"
+        },
+        "data": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        },
+        "updated_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        }
+      }
+    },
+    "DataModelItem_attributes": {
+      "required": [
+        "content"
+      ],
+      "properties": {
+        "content": {
+          "type": "object",
+          "properties": {}
+        }
+      }
+    },
+    "DataModel_attributes": {
+      "required": [
+        "content"
+      ],
+      "properties": {
+        "content": {
+          "type": "string",
+          "example": "Some parameters in json format"
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        },
+        "updated_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        }
+      }
+    },
+    "Instance_attributes": {
+      "required": [
+        "process_id",
+        "status"
+      ],
+      "properties": {
+        "process_id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b11"
+        },
+        "parent_instance_id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b12"
+        },
+        "init_user_id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b14"
+        },
+        "pin": {
+          "type": "string"
+        },
+        "duration": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "RUNNING",
+            "TODO",
+            "PAUSED",
+            "COMPLETED",
+            "CANCELLED"
+          ],
+          "default": "RUNNING"
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        },
+        "updated_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        }
+      }
+    },
+    "Flow_attributes": {
+      "required": [
+        "default",
+        "from_object_id",
+        "from_object_type",
+        "optional",
+        "process_id",
+        "to_object_id",
+        "to_object_type",
+        "type"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "Flow name"
+        },
+        "description": {
+          "type": "string",
+          "example": "Some description"
+        },
+        "process_id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b11"
+        },
+        "from_object_id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b25"
+        },
+        "from_object_type": {
+          "type": "string",
+          "example": "task"
+        },
+        "to_object_id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b25"
+        },
+        "to_object_type": {
+          "type": "string",
+          "example": "event"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "SEQUENTIAL",
+            "EVALUATE",
+            "SELECT",
+            "PARALLEL",
+            "PARALLEL-BY-EVALUATION",
+            "SEC-JOIN",
+            "DISCRIMINATOR"
+          ],
+          "default": "SEQUENTIAL"
+        },
+        "condition": {
+          "type": "string"
+        },
+        "default": {
+          "type": "boolean",
+          "default": false
+        },
+        "optional": {
+          "type": "boolean",
+          "default": false
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        },
+        "updated_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        }
+      }
+    },
+    "Gateway_attributes": {
+      "required": [
+        "process_id",
+        "type"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "Gateway Title"
+        },
+        "description": {
+          "type": "string",
+          "example": "Some description"
+        },
+        "process_id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b11"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "EXCLUSIVE",
+            "INCLUSIVE",
+            "PARALLEL",
+            "EVENT"
+          ]
+        },
+        "direction": {
+          "type": "string",
+          "enum": [
+            "DIVERGENT",
+            "CONVERGENT",
+            "MIXED"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        },
+        "updated_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        }
+      }
+    },
+    "Event_attributes": {
+      "required": [
+        "definition",
+        "name",
+        "process_id",
+        "type"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "Event_Title"
+        },
+        "description": {
+          "type": "string",
+          "example": "Some description"
+        },
+        "process_id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b11"
+        },
+        "message_id": {
+          "type": "integer"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "START",
+            "END",
+            "INTERMEDIATE_CATCH",
+            "INTERMEDIATE_THROW",
+            "BOUNDARY",
+            "IMPLICIT_THROW"
+          ]
+        },
+        "definition": {
+          "type": "string",
+          "enum": [
+            "NONE",
+            "CANCEL",
+            "COMPENSATION",
+            "ERROR",
+            "ESCALATION",
+            "MESSAGE",
+            "LINK",
+            "SIGNAL",
+            "TERMINATE",
+            "TIMER"
+          ]
+        },
+        "interrupting": {
+          "type": "boolean"
+        },
+        "condition": {
+          "type": "string"
+        },
+        "time": {
+          "type": "string"
+        },
+        "duration": {
+          "type": "string"
+        },
+        "cycle": {
+          "type": "string"
+        },
+        "attached_to_task_id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b11"
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        },
+        "updated_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        }
+      }
+    },
+    "Task_attributes": {
+      "required": [
+        "assign_type",
+        "can_upload",
+        "name",
+        "process_id",
+        "selfservice_timeout",
+        "send_last_email",
+        "start",
+        "transfer_fly",
+        "type",
+        "view_additional_documentation",
+        "view_upload"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "Task_Title"
+        },
+        "description": {
+          "type": "string",
+          "example": "Some description"
+        },
+        "process_id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b11"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "NORMAL",
+            "ADHOC",
+            "SUBPROCESS",
+            "HIDDEN",
+            "GATEWAYTOGATEWAY",
+            "WEBENTRYEVENT",
+            "END-MESSAGE-EVENT",
+            "START-MESSAGE-EVENT",
+            "INTERMEDIATE-THROW-MESSAGE-EVENT",
+            "INTERMEDIATE-CATCH-MESSAGE-EVENT",
+            "SCRIPT-TASK",
+            "SERVICE-TASK",
+            "USER-TASK",
+            "START-TIMER-EVENT",
+            "INTERMEDIATE-CATCH-TIMER-EVENT",
+            "END-EMAIL-EVENT",
+            "INTERMEDIATE-THROW-EMAIL-EVENT"
+          ],
+          "default": "NORMAL"
+        },
+        "assign_type": {
+          "type": "string",
+          "enum": [
+            "CYCLIC",
+            "MANUAL",
+            "EVALUATE",
+            "REPORT_TO",
+            "SELF_SERVICE",
+            "STATIC_MI",
+            "CANCEL_MI",
+            "MULTIPLE_INSTANCE",
+            "MULTIPLE_INSTANCE_VALUE_BASED"
+          ],
+          "default": "CYCLIC"
+        },
+        "priority_variable": {
+          "type": "string"
+        },
+        "assign_variable": {
+          "type": "string"
+        },
+        "group_variable": {
+          "type": "string"
+        },
+        "mi_instance_variable": {
+          "type": "string"
+        },
+        "mi_complete_variable": {
+          "type": "string"
+        },
+        "transfer_fly": {
+          "type": "boolean",
+          "default": false
+        },
+        "can_upload": {
+          "type": "boolean",
+          "default": false
+        },
+        "view_upload": {
+          "type": "boolean",
+          "default": false
+        },
+        "view_additional_documentation": {
+          "type": "boolean",
+          "default": false
+        },
+        "start": {
+          "type": "boolean",
+          "default": false
+        },
+        "send_last_email": {
+          "type": "boolean",
+          "default": true
+        },
+        "derivation_screen_tpl": {
+          "type": "string"
+        },
+        "selfservice_timeout": {
+          "type": "integer"
+        },
+        "selfservice_time": {
+          "type": "string"
+        },
+        "selfservice_time_unit": {
+          "type": "string"
+        },
+        "selfservice_execution": {
+          "type": "string"
+        },
+        "last_assigned_user_id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b11"
+        },
+        "script": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        },
+        "updated_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        }
+      }
+    },
+    "Process_attributes": {
+      "required": [
+        "design_access",
+        "duration_by",
+        "name",
+        "status",
+        "type"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "Process_Title"
+        },
+        "description": {
+          "type": "string",
+          "example": "Some description"
+        },
+        "parent_process_id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b11"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "ACTIVE",
+            "INACTIVE",
+            "DISABLED"
+          ],
+          "default": "ACTIVE"
+        },
+        "duration_by": {
+          "type": "string",
+          "enum": [
+            "WORKING_DAYS",
+            "CALENDAR_DAYS"
+          ],
+          "default": "WORKING_DAYS"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "NORMAL",
+            "SUB_PROCESS"
+          ],
+          "default": "NORMAL"
+        },
+        "assignment": {
+          "type": "boolean",
+          "default": false
+        },
+        "design_access": {
+          "type": "string",
+          "enum": [
+            "PUBLIC",
+            "PRIVATE"
+          ],
+          "default": "PUBLIC"
+        },
+        "show_map": {
+          "type": "boolean",
+          "default": true
+        },
+        "show_message": {
+          "type": "boolean",
+          "default": true
+        },
+        "show_delegate": {
+          "type": "boolean",
+          "default": true
+        },
+        "show_dynaform": {
+          "type": "boolean",
+          "default": false
+        },
+        "category_id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b22"
+        },
+        "sub_category_id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b33"
+        },
+        "create_user_id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b44"
+        },
+        "debug": {
+          "type": "boolean",
+          "default": false
+        },
+        "dynaform_summary_id": {
+          "type": "string",
+          "example": "9d705617-cc29-482a-85ff-7f7292f72b55"
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        },
+        "updated_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        }
+      }
+    },
+    "Group_attributes": {
+      "required": [
+        "code",
+        "title"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "example": "GROUP_ADMIN"
+        },
+        "title": {
+          "type": "string",
+          "example": "Group_Title"
+        },
+        "description": {
+          "type": "string",
+          "example": "Some description"
+        },
+        "status": {
+          "type": "string",
+          "example": "ACTIVE",
+          "enum": [
+            "ACTIVE",
+            "INACTIVE"
+          ],
+          "default": "ACTIVE"
+        },
+        "users": {
+          "type": "array",
+          "description": "User IDs array",
+          "items": {
+            "type": "string",
+            "example": "9d705617-cc29-482a-85ff-7f7292f72b31"
+          }
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        },
+        "updated_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        }
+      }
+    },
+    "ResultSuccess_meta": {
+      "required": [
+        "code"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "example": "1234",
+          "description": "Result code from ApiCodes dictionary"
+        },
+        "title": {
+          "type": "string",
+          "example": "Some positive result description",
+          "description": "Result textual explanation"
+        }
+      }
+    },
+    "User_attributes": {
+      "required": [
+        "email",
+        "firstname",
+        "lastname",
+        "password",
+        "username"
+      ],
+      "properties": {
+        "username": {
+          "type": "string",
+          "example": "user_name"
+        },
+        "password": {
+          "type": "string",
+          "example": "some_password"
+        },
+        "firstname": {
+          "type": "string",
+          "example": "First_name"
+        },
+        "lastname": {
+          "type": "string",
+          "example": "Last_name"
+        },
+        "email": {
+          "type": "string",
+          "example": "example@example.com"
+        },
+        "expires_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        },
+        "status": {
+          "type": "string",
+          "example": "ACTIVE",
+          "enum": [
+            "ACTIVE",
+            "INACTIVE",
+            "VACATION",
+            "CLOSED"
+          ],
+          "default": "ACTIVE"
+        },
+        "country": {
+          "type": "string",
+          "example": "USA"
+        },
+        "city": {
+          "type": "string",
+          "example": "Washington"
+        },
+        "location": {
+          "type": "string",
+          "example": "Location"
+        },
+        "address": {
+          "type": "string",
+          "example": "USA"
+        },
+        "phone": {
+          "type": "string",
+          "example": "+1(99)999-99-99"
+        },
+        "fax": {
+          "type": "string",
+          "example": "+1(99)999-99-99"
+        },
+        "cellular": {
+          "type": "string",
+          "example": "+1(99)999-99-99"
+        },
+        "zip_code": {
+          "type": "string"
+        },
+        "position": {
+          "type": "string"
+        },
+        "resume": {
+          "type": "string"
+        },
+        "birthday_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        },
+        "bookmark_start_cases": {
+          "type": "string"
+        },
+        "time_zone": {
+          "type": "string"
+        },
+        "default_lang": {
+          "type": "string",
+          "default": "en_US"
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        },
+        "updated_at": {
+          "type": "string",
+          "example": "2017-01-01T00:00:00+00:00"
+        },
+        "clients": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "Pagination_links": {
+      "properties": {
+        "next": {
+          "type": "string",
+          "example": "http://localhost/api/v1/groups?page=3"
+        },
+        "previous": {
+          "type": "string",
+          "example": "http://localhost/api/v1/groups?page=1"
+        }
+      }
+    }
+  },
+  "parameters": {
+    "page": {
+      "name": "page",
+      "in": "query",
+      "description": "Page number to fetch",
+      "required": false,
+      "type": "integer",
+      "default": 1,
+      "minimum": 1
+    },
+    "per_page": {
+      "name": "per_page",
+      "in": "query",
+      "description": "Amount of items per page",
+      "required": false,
+      "type": "integer",
+      "default": 15,
+      "maximum": 100,
+      "minimum": 1
+    }
+  },
+  "security": [
+    {
+      "PasswordGrant": []
+    }
+  ],
+  "x-tagGroups": [
+    {
+      "name": "User Management",
+      "tags": [
+        "users",
+        "groups",
+        "oauth"
+      ]
+    },
+    {
+      "name": "Process Management",
+      "tags": [
+        "process",
+        "flow",
+        "process instance",
+        "task",
+        "gateway",
+        "event",
+        "input/output"
+      ]
+    }
+  ]
+}

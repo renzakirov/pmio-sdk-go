@@ -19,6 +19,48 @@ _cgo_export.*
 
 _testmain.go
 
+*.bak
 *.exe
 *.test
 *.prof
+application.linux
+_workspace
+playground
+*.coverprofile
+
+env.json
+examples\authconfig.json
+
+# Sublime files
+*.sublime-*
+
+# Vscode files
+.vscode/*
+cmd/swagger/swagger.json.bak
+tags
+debug
+debug.exe
+
+### Vim
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+*~
+profile.cov
+
+# Drone
+secrets.yml
+dist
+
+# Idea
+.idea
+go-swagger.iml
+
+node_modules
+_book
+
+tmp/
+cover/
+bin/
